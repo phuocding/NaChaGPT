@@ -11,15 +11,25 @@ const KEY = process.env.KEY;
 
 // Endpoint để Lark gọi webhook
 app.post('/webhook', async (req, res) => {
-    console.log("----start debug----")
-    console.log(req.body);
-    res.status(200).send('Webhook received');
-    const message = req.body.text;
-    const chatId = req.body.event.message.chat_id;
-    
-    // Gọi OpenAI API để lấy phản hồi từ ChatGPT
+    const body = req.body;
+
+    if (body.type === 'url_verification') {
+        // Xử lý yêu cầu xác minh URL
+        return res.status(200).send({ challenge: body.challenge });
+    }
+
+    // Xử lý các yêu cầu khác
+    const event = body.event;
+    if (!event || !event.message || !event.message.content || !event.message.chat_id) {
+        console.error('Invalid data structure:', req.body);
+        return res.status(400).send('Invalid data structure');
+    }
+
+    const message = event.message.content.text;
+    const chatId = event.message.chat_id;
+
     try {
-        const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
+        const response = await axios.post('https://api.openai.com/v1/completions', {
             prompt: message,
             max_tokens: 150,
         }, {
@@ -30,8 +40,7 @@ app.post('/webhook', async (req, res) => {
         });
 
         const reply = response.data.choices[0].text.trim();
-        
-        // Gửi phản hồi lại cho Lark
+
         await axios.post('https://open.larksuite.com/open-apis/message/v4/send/', {
             chat_id: chatId,
             msg_type: 'text',
@@ -50,7 +59,6 @@ app.post('/webhook', async (req, res) => {
     }
 });
 
-// Khởi động server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
