@@ -5,9 +5,9 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-const APPID = 'your-app-id';
-const SECRET = 'your-app-secret';
-const KEY = 'your-openai-api-key';
+const APPID = process.env.APPID;
+const SECRET = process.env.SECRET;
+const KEY = process.env.KEY;
 
 // Endpoint để Lark gọi webhook
 app.post('/webhook', async (req, res) => {
