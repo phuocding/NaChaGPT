@@ -11,6 +11,8 @@ const KEY = process.env.KEY;
 
 // Endpoint để Lark gọi webhook
 app.post('/webhook', async (req, res) => {
+    console.log(req.body);
+    res.status(200).send('Webhook received');
     const message = req.body.text;
     const chatId = req.body.event.message.chat_id;
     
