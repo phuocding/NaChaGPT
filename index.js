@@ -12,6 +12,7 @@ const KEY = 'your-openai-api-key';
 // Endpoint để Lark gọi webhook
 app.post('/webhook', async (req, res) => {
     const message = req.body.text;
+    const chatId = req.body.event.message.chat_id;
     
     // Gọi OpenAI API để lấy phản hồi từ ChatGPT
     try {
@@ -29,7 +30,7 @@ app.post('/webhook', async (req, res) => {
         
         // Gửi phản hồi lại cho Lark
         await axios.post('https://open.larksuite.com/open-apis/message/v4/send/', {
-            chat_id: req.body.chat_id,
+            chat_id: chatId,
             msg_type: 'text',
             content: JSON.stringify({ text: reply })
         }, {
@@ -41,8 +42,8 @@ app.post('/webhook', async (req, res) => {
 
         res.sendStatus(200);
     } catch (error) {
-        console.error('Error:', error);
-        res.sendStatus(500);
+        console.error('Error:', error.response ? error.response.data : error.message);
+        res.status(500).send(error.response ? error.response.data : { error: error.message });
     }
 });
 
