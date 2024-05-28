@@ -11,6 +11,7 @@ const KEY = process.env.KEY;
 
 // Endpoint để Lark gọi webhook
 app.post('/webhook', async (req, res) => {
+    console.log("----start debug----")
     console.log(req.body);
     res.status(200).send('Webhook received');
     const message = req.body.text;
