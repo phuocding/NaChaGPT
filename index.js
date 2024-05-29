@@ -32,7 +32,9 @@ app.post('/webhook', async (req, res) => {
     try {
         const response = await axios.post('https://api.openai.com/v1/completions', {
             model: 'gpt-3.5-turbo',
-            prompt: message,
+            messages: [
+                { role: 'user', content: message }
+            ],
             max_tokens: 150,
         }, {
             headers: {
