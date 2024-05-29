@@ -18,9 +18,9 @@ app.post('/webhook', async (req, res) => {
         return res.status(200).send({ challenge: body.challenge });
     }
 
-    // Xử lý các yêu cầu khác
+     // Xử lý các yêu cầu khác
     const event = body.event;
-    if (!event || !event.message || !event.message.content || !event.message.chat_id) {
+    if (!event || !event.text || !event.open_chat_id) {
         console.error('Invalid data structure:', req.body);
         return res.status(400).send('Invalid data structure');
     }
@@ -30,6 +30,7 @@ app.post('/webhook', async (req, res) => {
 
     try {
         const response = await axios.post('https://api.openai.com/v1/completions', {
+            model: 'text-davinci-003',
             prompt: message,
             max_tokens: 150,
         }, {
