@@ -25,7 +25,7 @@ app.post('/webhook', async (req, res) => {
         return res.status(400).send('Invalid data structure');
     }
 
-    const message = event.message.content.text;
+    const message = event.text;
     const chatId = event.message.chat_id;
 
     try {
