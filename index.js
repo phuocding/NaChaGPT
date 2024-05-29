@@ -20,13 +20,14 @@ app.post('/webhook', async (req, res) => {
 
      // Xử lý các yêu cầu khác
     const event = body.event;
-    if (!event || !event.text || !event.open_chat_id) {
+    if (!event || !event.message || !event.message.content || !event.message.chat_id) {
         console.error('Invalid data structure:', req.body);
         return res.status(400).send('Invalid data structure');
     }
 
-    const message = event.text;
-    const chatId = event.open_chat_id;
+    const messageContent = JSON.parse(event.message.content);
+    const message = messageContent.text;
+    const chatId = event.message.chat_id;
 
     try {
         const response = await axios.post('https://api.openai.com/v1/completions', {
