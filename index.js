@@ -26,7 +26,7 @@ app.post('/webhook', async (req, res) => {
     }
 
     const message = event.text;
-    const chatId = event.message.chat_id;
+    const chatId = event.open_chat_id;
 
     try {
         const response = await axios.post('https://api.openai.com/v1/completions', {
