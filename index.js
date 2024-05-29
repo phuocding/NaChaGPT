@@ -59,7 +59,11 @@ app.post('/webhook', async (req, res) => {
         res.sendStatus(200);
     } catch (error) {
         console.error('Error:', error.response ? error.response.data : error.message);
-        res.status(500).send(error.response ? error.response.data : { error: error.message });
+        if (error.response && error.response.status === 429) {
+            res.status(429).send('Quota exceeded. Please check your OpenAI plan and billing details.');
+        } else {
+            res.status(500).send(error.response ? error.response.data : { error: error.message });
+        }
     }
 });
 
